@@ -10,14 +10,12 @@ class Task:
         self.name = name
         self.priority = priority
 
-def prioritize(priority):
-    def decorator(func):
-        def wrapper(*args, **kwargs):
-            task = func(*args, **kwargs)
-            task.priority = priority
-            return task
-        return wrapper
-    return decorator
+def prioritize(func):
+    def wrapper(*args, **kwargs):
+        task = func(*args, **kwargs)
+        return task
+    return wrapper
+    
 
 class TaskManagerMeta(type):
     _instances = {}
@@ -32,7 +30,7 @@ class TaskManager(metaclass=TaskManagerMeta):
     def __init__(self):
         self.tasks = []
 
-    @prioritize(priority=0)
+    @prioritize
     def create_task(self, name, priority):
         return Task(name, priority)
 
@@ -49,9 +47,9 @@ class TaskManager(metaclass=TaskManagerMeta):
 
 task_manager = TaskManager()
 
+task_manager.add_task(task_manager.create_task("Завдання 3", 3))
 task_manager.add_task(task_manager.create_task("Завдання 1", 1))
 task_manager.add_task(task_manager.create_task("Завдання 2", 2))
-task_manager.add_task(task_manager.create_task("Завдання 3", 3))
 
 sorted_tasks = task_manager.get_sorted_tasks()
 task_manager.print_tasks(sorted_tasks)
